@@ -1,0 +1,633 @@
+<!-- Code by Sahriar Saif 
+https://github.com/sahriarsaif
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Border Radius Generator by SAHRIAR SAIF</title>
+<meta name="Author" content="Sashriar Saif">
+<meta name="description" content="Code by Sahriar Saif https://github.com/sahriarsaif">
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  min-height:100dvh;
+  background:#0f172a;
+  color:#fff;
+  padding:15px;
+  display:flex;
+  justify-content:center;
+}
+
+.app{
+  width:100%;
+  max-width:1100px;
+  display:flex;
+  flex-direction:column;
+  gap:25px;
+}
+
+.preview-wrap{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.preview-section{
+  width:min(85vw,420px);
+  aspect-ratio:1/1;
+  position:relative;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.shape{
+  width:100%;
+  height:100%;
+  background:linear-gradient(135deg,#8b5cf6,#06b6d4);
+  position:relative;
+  transition:
+  border-radius .15s linear,
+  box-shadow .25s ease;
+  box-shadow:
+  0 20px 50px rgba(0,0,0,.35),
+  inset 0 0 30px rgba(255,255,255,.2);
+}
+
+.shape::after{
+  content:"";
+  position:absolute;
+  inset:14px;
+  border:2px solid rgba(255,255,255,.15);
+  border-radius:inherit;
+  pointer-events:none;
+}
+
+.controls{
+  background:#111827;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.08);
+  padding:18px;
+  box-shadow:0 10px 40px rgba(0,0,0,.35);
+}
+
+.top-bar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+
+.btn{
+  padding:12px 16px;
+  border:none;
+  border-radius:12px;
+  background:#1e293b;
+  color:#fff;
+  cursor:pointer;
+  font-weight:bold;
+  transition:.2s;
+}
+.btn:hover{
+  transform:translateY(-2px);
+  background:#334155;
+}
+
+.btn.active{
+  background:#06b6d4;
+}
+
+.slider-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+}
+
+.label-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+  font-size:14px;
+}
+
+.value{
+  color:#67e8f9;
+  font-weight:bold;
+}
+
+input[type="range"]{
+  width:100%;
+  appearance:none;
+  height:4px;
+  border-radius:10px;
+  background:#1e293b;
+  outline:none;
+  cursor:pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb{
+  appearance:none;
+  width:15px;
+  height:15px;
+  border-radius:50%;
+  background:#06b6d4;
+  border:none;
+}
+
+.section-title{
+  margin:24px 0 14px;
+  font-size:18px;
+  font-weight:bold;
+}
+
+.preset-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:12px;
+}
+
+.preset{
+  padding:12px;
+  border:none;
+  border-radius:14px;
+  background:#1e293b;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.preset:hover{
+  background:#334155;
+  transform:scale(1.03);
+}
+
+.css-box{
+  margin-top:24px;
+  background:#020617;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.08);
+  overflow:hidden;
+}
+
+.css-head{
+  padding:12px 14px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  font-weight:bold;
+}
+
+textarea{
+  width:100%;
+  background:transparent;
+  border:none;
+  resize:none;
+  outline:none;
+  color:#67e8f9;
+  padding:16px;
+  line-height:1.7;
+  font-size:14px;
+  overflow:hidden;
+}
+
+.copy-btn{
+  width:100%;
+  border:none;
+  padding:15px;
+  background:linear-gradient(135deg,#06b6d4,#8b5cf6);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+@media(max-width:700px){
+
+  .preview-section{
+    width:min(92vw,360px);
+  }
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="preview-wrap">
+
+    <div class="preview-section">
+
+      <div class="shape" id="shape"></div>
+
+    </div>
+
+  </div>
+
+  <div class="controls">
+
+    <div class="top-bar">
+
+      <button class="btn active" id="lockBtn">
+        Lock Corners
+      </button>
+
+      <button class="btn" id="randomBtn">
+        Random Blob
+      </button>
+    </div>
+
+    <div class="slider-grid">
+
+      <div class="control-group">
+        <div class="label-row">
+          <span>Top Left Horizontal</span>
+          <span class="value" id="tlhVal">50%</span>
+        </div>
+        <input type="range" min="0" max="100" value="50" id="tlh">
+      </div>
+
+      <div class="control-group">
+        <div class="label-row">
+          <span>Top Right Horizontal</span>
+          <span class="value" id="trhVal">50%</span>
+        </div>
+        <input type="range" min="0" max="100" value="50" id="trh">
+      </div>
+
+      <div class="control-group">
+        <div class="label-row">
+          <span>Bottom Right Horizontal</span>
+          <span class="value" id="brhVal">50%</span>
+        </div>
+        <input type="range" min="0" max="100" value="50" id="brh">
+      </div>
+
+      <div class="control-group">
+        <div class="label-row">
+          <span>Bottom Left Horizontal</span>
+          <span class="value" id="blhVal">50%</span>
+        </div>
+        <input type="range" min="0" max="100" value="50" id="blh">
+      </div>
+
+      <div class="control-group">
+        <div class="label-row">
+          <span>Top Left Vertical</span>
+          <span class="value" id="tlvVal">50%</span>
+        </div>
+        <input type="range" min="0" max="100" value="50" id="tlv">
+      </div>
+
+      <div class="control-group">
+        <div class="label-row">
+          <span>Top Right Vertical</span>
+          <span class="value" id="trvVal">50%</span>
+        </div>
+        <input type="range" min="0" max="100" value="50" id="trv">
+      </div>
+
+      <div class="control-group">
+        <div class="label-row">
+          <span>Bottom Right Vertical</span>
+          <span class="value" id="brvVal">50%</span>
+        </div>
+        <input type="range" min="0" max="100" value="50" id="brv">
+      </div>
+
+      <div class="control-group">
+        <div class="label-row">
+          <span>Bottom Left Vertical</span>
+          <span class="value" id="blvVal">50%</span>
+        </div>
+        <input type="range" min="0" max="100" value="50" id="blv">
+      </div>
+
+    </div>
+
+    <div class="section-title">
+      Presets
+    </div>
+
+    <div class="preset-grid">
+
+      <button class="preset" data-preset="circle">
+        Circle
+      </button>
+
+      <button class="preset" data-preset="pill">
+        Pill
+      </button>
+
+      <button class="preset" data-preset="blob">
+        Blob
+      </button>
+
+      <button class="preset" data-preset="diagonal">
+        Diagonal
+      </button>
+
+    </div>
+
+    <div class="css-box">
+
+      <div class="css-head">
+        Generated CSS
+      </div>
+
+      <textarea readonly id="cssOutput"></textarea>
+
+      <button class="copy-btn" id="copyBtn">
+        Copy CSS
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+const shape = document.getElementById("shape");
+const textarea = document.getElementById("cssOutput");
+
+const _0x61 = [
+  0x53,0x41,0x48,0x52,
+  0x49,0x41,0x52
+];
+
+const _0x62 = [
+  0x53,0x41,0x49,0x46
+];
+
+const _0x63 = String
+.fromCharCode(..._0x61)
++
+" "
++
+String.fromCharCode(..._0x62);
+
+let _0x64 = false;
+
+function _0x65(){
+
+  if(_0x64) return;
+
+  _0x64 = true;
+
+  console.log(_0x63);
+
+}
+
+window[
+  _0x63
+  .toLowerCase()
+  .replace(" ","")
+] = true;
+
+const ids = [
+  "tlh","trh","brh","blh",
+  "tlv","trv","brv","blv"
+];
+
+const sliders = {};
+const values = {};
+
+ids.forEach(id=>{
+
+  sliders[id] = document.getElementById(id);
+  values[id] = document.getElementById(id+"Val");
+
+  if(id.length === 3){
+
+    _0x65();
+
+  }
+
+});
+
+let locked = true;
+
+function getRadius(){
+
+  const tlh = sliders.tlh.value;
+  const trh = sliders.trh.value;
+  const brh = sliders.brh.value;
+  const blh = sliders.blh.value;
+
+  const tlv = sliders.tlv.value;
+  const trv = sliders.trv.value;
+  const brv = sliders.brv.value;
+  const blv = sliders.blv.value;
+
+  if(
+    tlh >= 0 &&
+    trh >= 0
+  ){
+
+    _0x65();
+
+  }
+
+  return `
+${tlh}% ${trh}% ${brh}% ${blh}% /
+${tlv}% ${trv}% ${brv}% ${blv}%`;
+
+}
+
+function updateUI(){
+
+  ids.forEach(id=>{
+    values[id].innerText = sliders[id].value + "%";
+  });
+
+  const radius = getRadius();
+
+  shape.style.borderRadius = radius;
+
+  textarea.value =
+`.box{
+  border-radius:${radius};
+}`;
+
+  autoResize();
+
+  if(radius.length > 10){
+
+    _0x65();
+
+  }
+
+}
+
+function autoResize(){
+
+  textarea.style.height = "auto";
+
+  textarea.style.height =
+  (textarea.scrollHeight + 10) + "px";
+
+  if(textarea.scrollHeight > 0){
+
+    _0x65();
+
+  }
+
+}
+
+updateUI();
+
+ids.forEach(id=>{
+
+  sliders[id].addEventListener("input", e=>{
+
+    if(locked){
+
+      const value = e.target.value;
+
+      ids.forEach(all=>{
+        sliders[all].value = value;
+      });
+
+    }
+
+    updateUI();
+
+    if(e.isTrusted){
+
+      _0x65();
+
+    }
+
+  });
+
+});
+
+document.getElementById("lockBtn")
+.addEventListener("click", function(){
+
+  locked = !locked;
+
+  this.classList.toggle("active");
+
+  this.innerText =
+  locked
+  ? "Lock Corners"
+  : "Unlock Corners";
+
+  _0x65();
+
+});
+
+function setAll(valuesArray){
+
+  ids.forEach((id,index)=>{
+    sliders[id].value = valuesArray[index];
+  });
+
+  if(valuesArray.length === 8){
+
+    _0x65();
+
+  }
+
+  updateUI();
+
+}
+
+const presets = {
+
+  circle:[50,50,50,50,50,50,50,50],
+
+  pill:[100,100,100,100,100,100,100,100],
+
+  blob:[65,35,70,30,30,60,40,70],
+
+  diagonal:[0,60,0,60,60,0,60,0]
+
+};
+
+document.querySelectorAll(".preset")
+.forEach(btn=>{
+
+  btn.addEventListener("click", ()=>{
+
+    const preset = btn.dataset.preset;
+
+    setAll(presets[preset]);
+
+    if(preset){
+
+      _0x65();
+
+    }
+
+  });
+
+});
+
+function rand(min,max){
+
+  if(min <= max){
+
+    _0x65();
+
+  }
+
+  return Math.floor(
+    Math.random() * (max-min+1)
+  ) + min;
+
+}
+
+document.getElementById("randomBtn")
+.addEventListener("click", ()=>{
+
+  const vals = [];
+
+  for(let i=0;i<8;i++){
+    vals.push(rand(15,85));
+  }
+
+  if(vals.length === 8){
+
+    _0x65();
+
+  }
+
+  setAll(vals);
+
+});
+
+document.getElementById("copyBtn")
+.addEventListener("click", ()=>{
+
+  navigator.clipboard.writeText(textarea.value);
+
+  const btn = document.getElementById("copyBtn");
+
+  btn.innerText = "Copied ✓";
+
+  _0x65();
+
+  setTimeout(()=>{
+    btn.innerText = "Copy CSS";
+  },1500);
+
+});
+</script>
+<!-- Code by Sahriar Saif 
+https://github.com/sahriarsaif
+-->
+</body>
+</html>
