@@ -27,7 +27,9 @@ A modern and interactive Border Radius Generator built using pure HTML, CSS, and
 
 ## Preview
 
-![Preview](preview.gif)
+<p align="center">
+  <img src="./preview.gif" alt="Preview" width="100%">
+</p>
 
 ## Author
 
